@@ -1,0 +1,54 @@
+﻿@using eManager.WebModels;
+@model CompanyViewModel
+
+@{
+    ViewBag.Title = "Информации за добавувачот";
+
+}
+
+<div class="container" id="listCompanyProducts">
+    <h2>Продукти од @Model.Name</h2>
+
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Продукт</th>
+                <th>Цена</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.CompanyProducts)
+            {
+                <tr>
+
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>
+
+                        <a asp-action="UpdateCompanyInfo" asp-controller="Company" asp-route-id="@product.Id" class="btn btn-success" id="editBtn">Измени</a> |
+                        <a asp-action="RemoveCompany" asp-controller="Company" asp-route-id="@product.Id" class="btn btn-danger" id="removeBtn">Избриши</a>
+
+
+                    </td>
+                </tr>
+            }
+
+
+
+        </tbody>
+    </table>
+
+</div>
+
+<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowCompanies", "Company")'">Назад</button>
+<div id="modalWrapper">
+
+</div>
+
+
+
+

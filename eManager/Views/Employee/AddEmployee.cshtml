@@ -1,0 +1,132 @@
+﻿@using eManager.WebModels;
+@model EmployeeViewModel;
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Нов вработен";
+
+}
+
+
+@using (Html.BeginForm())
+{
+
+
+
+<div class="container">
+    <fieldset class="col-md-12">
+        <legend><strong>Регистрација на нов вработен</strong></legend>
+        <form method="post" asp-controller="Employee" asp-action="AddEmployee">
+            @Html.HiddenFor(x => x.Id)
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Матичен број во компанија:</span>
+                    </div>
+                    @Html.TextBox("EmployeeNumber", null, new { @class = "form-control" })
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Име:</span>
+                    </div>
+                    @Html.TextBox("FirstName", null, new { @class = "form-control" })
+                </div>
+
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Презиме:</span>
+                    </div>
+                    @Html.TextBox("LastName", null, new { @class = "form-control" })
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Адреса:</span>
+                    </div>
+                    @Html.TextBox("Address", null, new { @class = "form-control" })
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Телефон:</span>
+                    </div>
+                    @Html.TextBox($"Phone", null, new { @class = "form-control" })
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Сектор:</span>
+                    </div>
+                    @Html.DropDownListFor(x => x.Department, Html.GetEnumSelectList(Model.Department.GetType()))
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Датум на раѓање:</span>
+                    </div>
+                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control",  @Value = DateTime.Today.ToString("dd/MM/yyyy") } })
+                    @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Плата:</span>
+                    </div>
+                    <p>@Html.TextBox($"Salary", null, new { @class = "form-control" })</p>
+                </div>
+
+           
+            <div class="col-md-6">
+                <div class="col-md-offset-4 col-md-10">
+                    <input type="submit" value="Внеси" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+        </form>
+    </fieldset>
+
+</div>
+}
+<br />
+<br />
+<hr />
+
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowEmployees", "Employee")'">Back</button>
+<script>
+    let employees = document.getElementsByClassName("catalog")[0];
+    console.log(employees);
+    employees.addEventListener("click", function (e) {
+        e.stopPropagation();
+        let target = e.target;
+
+
+        let targetId = target.classList.contains("employeeCard") ? target.value : null;
+        console.log(targetId);
+
+        if (targetId != null) {
+            fetch("/Employee/AddEmployeesToActivity?employeeId=" + targetId, {
+                method: "post",
+
+            })
+
+
+        }
+
+
+    })
+
+
+    $('.employeeCard').click(function () {
+        setTimeout(function () {
+
+            $("#msg").show().fadeOut(3000);
+        }, 400)
+    })
+
+</script>

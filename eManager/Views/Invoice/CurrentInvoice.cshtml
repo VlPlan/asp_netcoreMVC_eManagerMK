@@ -1,0 +1,403 @@
+﻿@using eManager.WebModels;
+@model InvoiceViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Нова фактура";
+    var counter = 0;
+    double sumVat = 0;
+    double sumTotal = 0;
+    double nullVat = 0;
+    double currencyRate = 0;
+    var serviceId = 0;
+    double qty = 0;
+
+
+}
+
+<style>
+    .alert-message-danger {
+        background-color: #fdf7f7;
+        border-color: #d9534f;
+    }
+
+        .alert-message-danger h4 {
+            color: #d9534f;
+        }
+</style>
+
+<div id="msgRemove" class="alert-danger" style="display:none">Услугата е отстранета!</div><br />
+<div class="col-md-6">
+    @{
+        foreach (var i in Model.InvoiceServices)
+        {
+            currencyRate = i.CurrencyRate;
+            var service = i.ServiceId;
+        }
+
+    }
+    @{
+        foreach (var i in Model.InvoiceServices)
+        {
+
+            serviceId = i.ServiceId;
+        }
+
+    }
+
+
+    @using (Html.BeginForm("UpdatePrice", "Invoice", FormMethod.Post))
+    {
+
+        @if (Model.InvoiceServices.Any(x => x.Currency == CurrencyView.ЕУР))
+        {
+            <input name="serviceId" value="@serviceId" type="hidden" />
+            <input name="invoiceId" value="@Model.Id" type="hidden" />
+
+            <div class="row">
+                <div class="input-group col-md-6">
+                    <span>
+                        Внесете го курсот за @Model.InvoiceDate.ToString("dd/MM/yyyy"):
+                        <input type="text" name="currencyRate" class="form-control" maxlength="9" value=@currencyRate />
+                    </span>
+                    &nbsp;<span id="addMsg"></span>
+
+                </div>
+            </div>
+
+            <input value="Конвертирај" class="btn btn-info" role="button" type="submit">
+
+        }
+
+
+
+
+    }
+
+</div>
+
+<br />
+
+@using (Html.BeginForm("RegisterInvoice", "Invoice", FormMethod.Post))
+{
+<div class="container" id="currentInvoice" style="display:none">
+    @Html.HiddenFor(model => model.Id)
+    <div class="row">
+        <div class="col-md-6">
+            <label for="InvoiceNumber">Број на фактура: </label><span>@Html.DisplayFor(x => x.InvoiceNumber)</span>
+        </div>
+    </div>
+    <br />
+
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Датум на фактура:</span>
+            </div>
+
+            @Html.EditorFor(model => model.InvoiceDate, new { htmlAttributes = new { @class = "invoiceDate", @Value = DateTime.Today.ToString("dd/MM/yyyy") } })
+            @Html.ValidationMessageFor(model => model.InvoiceDate, "", new { @class = "text-dang" })
+
+
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Период на плаќање:</span>
+            </div>
+
+            @Html.TextBox("PaymentPeriod", null, new { @class = "form-control dueDate", @type = "number" })
+
+        </div>
+
+        <div class="col-md-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Клиент: </span>
+            </div>
+            @Html.DisplayFor(x => x.Client.Name)
+        </div>
+
+        <div class="col-md-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Адреса на клиент: </span>
+            </div>
+            @Html.DisplayFor(x => x.Client.Address)
+        </div>
+
+    </div>
+
+
+    <br />
+    <div class="col-md-3">
+        <a class="fa fa-refresh" style="background-color:cadetblue;color:#fff;border:medium;" asp-action="CurrentInvoice" asp-controller="Invoice">Освежи</a>
+    </div>
+
+    <br />
+
+    <div class="col-md-6">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Забелешка/Краток опис: </span>
+        </div>
+
+        @Html.TextBox("Description", null, new { @class = "form-control", @type = "text" })
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Рег.бр.</th>
+                <th>Опис</th>
+                <th>Единечна цена</th>
+                <th>Количина</th>
+                <th>ДДВ</th>
+                <th>Вкупно</th>
+                <th></th>
+
+
+            </tr>
+        </thead>
+        <tbody class="invoiceServices">
+            @if (Model.InvoiceServices.Count() > 0)
+            {
+
+                @foreach (var item in Model.InvoiceServices)
+                {
+
+                    <tr>
+                        <td>@(counter += 1)</td>
+
+                        <td>@item.ServiceId</td>
+                        <td>@item.Name</td>
+                        <td>
+                            @item.Price
+
+                        </td>
+                        <td>
+
+                            @item.Quantity
+
+
+                            <input type="hidden" name="serviceId" value="@item.ServiceId" />
+                            <input type="hidden" name="invoiceId" value="@Model.Id" />
+                         
+                            <a asp-controller="Invoice" asp-action="UpdateQuantity" asp-route-serviceId="@item.ServiceId" asp-route-invoiceId="@Model.Id">Промени количина</a>
+                        </td>
+
+                        <td>
+                            @{ var vat = item.Price * 0.18 * item.Quantity;}
+
+                            @if (Model.InvoiceServices.Any())
+                            {
+                                @if (item.Currency == CurrencyView.ЕУР && item.CurrencyRate == 1)
+                                {
+                                    @nullVat
+                                }
+                                @if (Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("liberty") || Model.ClientName.ToLower().Contains("либерти"))
+                                {
+                                    @nullVat
+
+                                }
+                                @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.ЕУР))
+                                {
+
+                                    @vat.ToString("N0")
+                                }
+                            }
+
+
+
+
+                        </td>
+                        <td>
+                            @{ var totalWithVat = item.Price * item.Quantity + vat; var totalWithoutVat = item.Price * item.Quantity;}
+                            @if (Model.InvoiceServices.Any())
+                            {
+                                @if (item.Currency == CurrencyView.ЕУР && item.CurrencyRate == 1 || Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("либерти"))
+                                {
+                                    @totalWithoutVat.ToString("N0")
+                                }
+                                @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.ЕУР))
+                                {
+
+                                    @totalWithVat.ToString("N0")
+                                }
+                            }
+                            </td>
+                        <td>
+                            <a asp-controller="Invoice" asp-action="RemoveDetailsFromInvoice" asp-route-serviceId="@item.ServiceId" class="fa fa-trash invoiceService" role="button"></a>
+                        </td>
+                    </tr>
+
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Вкупно:</td>
+                <td>
+                    @{var sumVAT = Model.InvoiceServices.Sum(x => x.Price * x.Quantity); var resultVAT = sumVAT * 0.18;}
+                    @{var nullVAT = 0;}
+                    @{string mitalVatMsg = "Напомена: Пренесување на даночна обврска согласно чл.32-а став 1,точка 2 и член 53, став 6 од Закон за ДДВ.";}
+                    @if (Model.InvoiceServices.Any())
+                    {
+                        @if (Model.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.ЕУР))
+                        {
+
+                            @nullVAT
+                        }
+                        @if (Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("liberty") || Model.ClientName.ToLower().Contains("либерти"))
+                        {
+
+                            @mitalVatMsg
+
+                        }
+                        @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.ЕУР))
+                        {
+
+                            @resultVAT.ToString("N0")
+                        }
+
+                    }
+
+
+
+
+                </td>
+                <td>
+
+                    @{var sumTOTAL = Model.InvoiceServices.Sum(x => x.Price * x.Quantity); var sumWithVAT = sumTOTAL + resultVAT; }
+                    @if (Model.InvoiceServices.Any())
+                    {
+                        @if (Model.InvoiceServices.Any(x => x.Currency == CurrencyView.ЕУР && x.CurrencyRate == 1) || Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("либерти"))
+                        {
+                            @sumTOTAL.ToString("N0")
+                        }
+                        else
+                        { @sumWithVAT.ToString("N0")
+                    }
+                }
+
+                    </td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+
+    <div class="col-md-6">
+        <div class="col-md-offset-4 col-md-10">
+
+            <input value="Креирај фактура" class="btn btn-info" role="button" type="submit">
+        </div>
+    </div>
+
+
+
+</div>
+}
+<div id="emptyInvoice" style="display:none">
+    <div class="col-sm-6 col-md-6">
+        <div class="alert-message alert-message-danger">
+            <h4>
+                ПРАЗНА ФАКТУРА
+            </h4>
+            <p>
+                Во моментов нема генерирано фактура, ве молиме додадете услуги од делот на <strong><a href="@Url.Action("Services", "Service")">услуги</a></strong>.
+            </p>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+
+<hr />
+
+<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("Invoices", "Invoice")'">Назад кон листа на фактури</button>
+<button type="button" class="btn btn-success" onclick="location.href='@Url.Action("Services", "Service")'">Види листа на услуги</button>
+<script type="text/javascript" src=@Url.Content("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js")></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<script>
+
+
+
+
+        $(function () {
+            $("#editModalQTY").modal();
+        });
+
+
+
+
+
+
+    //let invoiceServices = document.getElementsByClassName("invoiceServices")[0];
+    //console.log(invoiceServices);
+    //invoiceServices.addEventListener("click", function (e) {
+
+    //    e.preventDefault();
+    //    let target = e.target;
+
+
+    //    let targetId = target.classList.contains("invoiceService") ? target.value : null;
+    //    console.log(targetId);
+    //    if (targetId != null) {
+    //        fetch("/Invoice/RemoveDetailsFromInvoice?serviceId=" + targetId, {
+    //            method: "delete",
+
+    //        })
+
+
+    //    }
+
+
+
+
+    //})
+
+    //invoiceServices.addEventListener("click", function (e) {
+    //    e.preventDefault();
+    //    let target = e.target;
+
+
+    //    let targetId = target.classList.contains("qtyBtn") ? target.value : null;
+    //    let qtyId = target.classList.contains("input-number") ? target.value : null;
+    //    console.log(targetId);
+    //    console.log(qtyId);
+    //    if (targetId != null && qtyId != null) {
+    //        fetch("/Invoice/UpdateQuantity?serviceId=" + targetId + "&quantity=" + qtyId.value, {
+    //            method: "post",
+
+    //        })
+
+
+    //    }})
+
+
+    $('.invoiceService').click(function () {
+        setTimeout(function () {
+
+            $("#msgRemove").show().fadeOut(3000);
+        }, 400)
+    })
+
+
+    $(document).ready(function () {
+        if (@Model.InvoiceServices.Count()> 0) {
+            $("#currentInvoice").show();
+        }
+        else {
+            $("#emptyInvoice").show();
+        }
+    })
+
+</script>

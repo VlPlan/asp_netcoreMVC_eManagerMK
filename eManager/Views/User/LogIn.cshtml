@@ -1,0 +1,55 @@
+﻿@using eManager.WebModels;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Логирање";
+}
+<style>
+
+    body{
+        background-color:#eee;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <h5>Логирајте се или <a href="@Url.Action("Register", "User")">Регистрирајте</a> се како нов корисник</h5>
+        <br/><br/>
+        <div class="main col-md-12">
+            <form asp-action="Login" asp-controller="User" method="post">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <label asp-for="Username"></label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                            <input asp-for="Username" type="text" class="form-control" placeholder="Внесете корисничко име" />
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <label asp-for="Password"></label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Внесете лозинка" />
+                        </div>
+                    </div>
+
+                </div>
+                <br/><br/>
+                <div class="row">
+                    <div class="col-md-5"></div>
+
+                    <div class="col-md-2">
+                        <button class="btn btn-success" type="submit">Влез</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

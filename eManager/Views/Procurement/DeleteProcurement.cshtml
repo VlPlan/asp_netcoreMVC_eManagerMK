@@ -1,0 +1,39 @@
+﻿
+@using eManager.WebModels;
+@model ProcurementViewModel
+
+@{
+    ViewBag.Title = "Избриши набавка";
+
+}
+
+<div class="modal fade" id="removeProcurementModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Дали сте сигурни дека сакате да ја избришете набавката ?</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Procurement" asp-action="DeleteProcurement">
+                    <button type="submit" class="btn btn-danger">Избриши</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("AllProcurements", "Procurement")'">Врати</button>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#removeProcurementModal").modal();
+    });
+</script>
+
+

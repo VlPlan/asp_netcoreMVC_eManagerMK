@@ -1,0 +1,156 @@
+﻿@using eManager.WebModels;
+@model ProcurementViewModel
+@{
+
+    ViewBag.Title = "Детали за набавка";
+    Layout = "_Layout";
+    var statusInit = ProcurementStatusViewModel.Одобрено;
+    bool isAdmin = User.IsInRole("admin");
+    bool isProcurement = User.IsInRole("procurementId");
+    bool isManager = User.IsInRole("managerId");
+    bool isTechnical = User.IsInRole("technicalId");
+}
+
+<h3><em>Детали за набавка:</em></h3>
+
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                Барател:
+                <p>@Model.User.FullName</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+              Број на набавка:
+                <p>@Model.Id</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                Статус:
+                <p>@Model.ProcurementStatus</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                Датум на барање:
+                <p>@Model.Date</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                Листа на барани продукти:
+                @if (Model.ProcurementProducts.Count() > 0)
+                {
+                <ul>
+
+                    @foreach (var product in Model.ProcurementProducts)
+                    {
+                
+                        <li>
+                            Опис: @product.Name | Цена: @{var total = product.Price * product.Quantity;} @total денари | Количина: @product.Quantity 
+
+
+
+                            @using (Html.BeginForm("UpdateQuantity", "Procurement", FormMethod.Post))
+                            {
+                                <input name="procurementId" value="@Model.Id" type="hidden" />
+                                <input name="productId" value="@product.Id" type="hidden" />
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field="">
+                                                <span class="glyphicon glyphicon-minus">-</span>
+                                            </button>
+                                        </span>
+                                        <input type="text" name="quantity" class="form-control input-number" maxlength="4" value=@product.Quantity />
+                                        &nbsp;<span id="addMsg"></span>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
+                                                <span class="glyphicon glyphicon-plus">+</span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <button type="submit">Додади количина</button>
+
+                            }
+
+
+                        </li>
+
+
+                    }
+                </ul>
+                    @if (Model.ProcurementStatus == ProcurementStatusViewModel.Процесира && isAdmin || Model.ProcurementStatus == ProcurementStatusViewModel.Процесира && isManager || Model.ProcurementStatus == ProcurementStatusViewModel.Процесира && isTechnical || Model.ProcurementStatus == ProcurementStatusViewModel.Процесира && isProcurement)
+                    {
+                        <div>
+                            <a asp-action="ConfirmProcurement" asp-controller="Procurement" asp-route-procurementId="@Model.Id" class="btn btn-primary">Одобри/Процесирај</a>
+                            <a asp-action="DeclineProcurement" asp-controller="Procurement" asp-route-procurementId="@Model.Id" class="btn btn-danger">Откажи/Одложи</a>
+                        </div>
+                    }
+                    else if (Model.ProcurementStatus == ProcurementStatusViewModel.Одобрено)
+                    {
+                        <div>Се чека испорака!</div>
+                        <div>Одобрено од @ViewBag.ApprovedBy</div>
+                        <a asp-controller="Procurement" asp-action="ChangeStatus" asp-route-procurementId="@Model.Id" asp-route-statusId="1" class="btn btn-info">Процесирај набавка</a>
+                    }
+                    else if (Model.ProcurementStatus == ProcurementStatusViewModel.Одбиено)
+                    {
+                        <div>Набавката е одбиена!</div>
+                        <a asp-controller="Procurement" asp-action="ChangeStatus" asp-route-procurementId="@Model.Id" asp-route-statusId="1" class="btn btn-info">Процесирај набавка</a>
+                    }
+                    else
+                    {
+                        <div>Се чека одговор....</div>
+                    }
+
+                }
+                else
+                {
+                    <p>Листата е празна!</p>
+                }
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+<script>
+    
+   
+    $(document).ready(function () {
+  
+        var i = 0;
+        $('.input-number').each(function () {
+            i++;
+            var newID = 'productQty' + i;
+            $(this).attr('id', newID);
+            $(this).val(i);
+
+        })
+       
+
+        $('.quantity-right-plus').on("click", function (e) {
+            e.preventDefault();
+            var quantity = parseInt($('.input-number').val());
+            console.log(this.quantity);
+            console.log(this.id);
+            $('.input-number').val(quantity + 1);
+          
+        });
+
+            $('.quantity-left-minus').click(function (e) {
+                e.preventDefault();
+                var quantity = parseInt($('.input-number').val());
+                if (quantity > 0) {
+                $('.input-number').val(quantity - 1);
+                }
+            });
+      
+        });
+
+
+</script>

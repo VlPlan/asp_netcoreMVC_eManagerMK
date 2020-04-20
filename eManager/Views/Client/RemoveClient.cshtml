@@ -1,0 +1,41 @@
+﻿
+@using eManager.WebModels;
+@model ClientViewModel
+
+@{
+    ViewBag.Title = "Remove client";
+    Layout = "_Layout";
+
+}
+
+<div class="modal fade" id="removeClientModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Дали сте сигурни дека сакате да го избришете @Model.Name од база?</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Client" asp-action="RemoveClient">
+                    <input type="hidden" name="ClientId" value="@Model.ClientId" />
+                    <button type="submit" class="btn btn-danger">Избриши корисник</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowClients", "Client")'">Врати</button>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#removeClientModal").modal();
+    });
+</script>
+
+

@@ -1,0 +1,120 @@
+﻿@using eManager.WebModels;
+@model List<ServiceViewModel>
+
+@{
+    ViewBag.Title = "Листа на услуги";
+    Layout = "_Layout";
+    var counter = 0;
+
+
+
+}
+
+<div class="container" id="services">
+    <h3 class="text-muted">УСЛУГИ</h3>
+    <button style="font-size:16px" class="btn-floating btn-success" onclick="location.href='@Url.Action("NewService", "Service")'"><i class="fa fa-plus"></i>Регистрирај нова услуга</button><br />
+
+    <div id="msgAdd" class="alert-success" style="display:none">Услугата е додадена!</div><br /><br />
+    <div id="createdInvoice" style="display:none">
+        <button role="button" class="fa fa-info" style="background-color:olivedrab;color:#fff;" onclick="location.href='@Url.Action("CurrentInvoice", "Invoice")'">Види фактура</button>
+    </div><br />
+   
+          <div>
+              <span class="input-group-text">Одберете клиент</span>
+              @Html.DropDownList("clientSelect",null, "--- Одберете клиент ---", new { @class = "form-control", @id="selectClient"})
+             
+          </div>
+          
+
+    <br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Рег.бр.</th>
+                <th>Услуга</th>
+                <th>Клиент</th>
+                <th>Валута</th>
+                <th>Цена (Без ДДВ)</th>
+
+
+            </tr>
+        </thead>
+        <tbody class="services" id="servicesTable" style="display:none;">
+
+            @foreach (var service in Model)
+            {
+
+                <tr>
+                    <td>@(counter += 1)</td>
+                    <td>@service.ServiceId</td>
+                    <td>@service.Name</td>
+                    <td>@service.SelectedClient</td>
+                    <td>@service.Currency</td>
+                    <td>@service.Price</td>
+
+                    <td>
+                        <button value="@service.ServiceId" class="btn btn-primary serviceItem" role="button">Додади во фактура</button> |
+                        <a asp-controller="Service" asp-action="RemoveService" asp-route-id="@service.ServiceId"><i class="fa fa-trash" aria-hidden="true"></i> Избриши</a>
+
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+    let services = document.getElementsByClassName("services")[0];
+    console.log(services);
+    services.addEventListener("click", function (e) {
+
+        e.stopPropagation();
+        let target = e.target;
+
+
+        let targetId = target.classList.contains("serviceItem") ? target.value : null;
+        console.log(targetId);
+        console.log(targetId);
+        if (targetId != null) {
+            fetch("/Invoice/AddDetailsToInvoice?serviceId=" + targetId, {
+                method: "post",
+
+            })
+
+
+        }
+
+
+    })
+
+    $('.serviceItem').click(function () {
+        $('#createdInvoice').show();
+        setTimeout(function () {
+
+            $("#msgAdd").show().fadeOut(3000);
+        }, 400)
+    })
+
+
+
+
+    $(document).ready(function () {
+
+        $('#selectClient').change(function () {
+            $("#servicesTable").show();
+            var value = $(this).val().toLowerCase();
+            $("#servicesTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+    
+
+
+</script>

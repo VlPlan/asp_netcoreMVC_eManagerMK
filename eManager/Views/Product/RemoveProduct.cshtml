@@ -1,0 +1,41 @@
+﻿
+@using eManager.WebModels;
+@model ProductViewModel
+
+@{
+    ViewBag.Title = "Избриши продукт";
+    Layout = "_Layout";
+
+}
+
+<div class="modal fade" id="removeProductModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Дали сте сигурни дека сакате да го избришете продуктот @Model.Name од база?</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Product" asp-action="RemoveProduct">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Избриши</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("Products", "Product")'">Врати</button>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#removeProductModal").modal();
+    });
+</script>
+
+

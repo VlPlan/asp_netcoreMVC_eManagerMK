@@ -1,0 +1,52 @@
+﻿
+
+@using eManager.WebModels;
+    @model ServiceViewModel
+
+    @{
+        Layout = "_Layout";
+        ViewBag.Title = "Ажурирај количина";
+
+
+    }
+
+
+    <div class="modal fade" id="editModalQTY">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Промена на податоци за @Model.Name</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form method="post" asp-controller="Invoice" asp-action="UpdateQuantity">
+                        @Html.HiddenFor(model => model.ServiceId)
+                        <label for="Quantity">Внеси количина:</label>
+                        @Html.TextBox("Quantity", null, new { @class = "form-control" })<br />
+
+                        <button type="submit" class="btn btn-success">Сними ги измените</button>
+
+                    </form>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("CurrentInvoice", "Invoice")'">Затвори</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+
+        $(function () {
+            $("#editModalQTY").modal();
+        });
+
+
+
+    </script>

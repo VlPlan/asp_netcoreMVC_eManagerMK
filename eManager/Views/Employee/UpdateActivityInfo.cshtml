@@ -1,0 +1,71 @@
+﻿@using eManager.WebModels;
+@model ActivityViewModel
+
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Ажурирај активност";
+
+
+}
+
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<div class="container">
+
+
+
+    <form method="post" asp-controller="Employee" asp-action="UpdateActivityInfo">
+        <label for="Description">Опис</label>
+        @Html.TextBox("Description", null, new { @class = "form-control" })<br />
+        <label for="Duration">Вкупно потрошени часови за активноста:</label>
+        @Html.TextBox("Duration", null, new { @class = "form-control" })<br />
+
+        <div class="modal-body">
+
+            @Html.HiddenFor(model => model.ActivityId)
+
+            <div>
+                <label for="Date">Датум:</label>
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "activityDate", @Value = DateTime.Today.ToString("dd/MM/yyyy") } })
+                @Html.DisplayFor(model => model.Date)
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-dang" })
+            </div>
+            <br />
+
+            <div>
+                <label for="Client">За клиент:</label>
+                @Html.DropDownListFor(c => c.ClientSelected, Model.Clients, "--Select client--")
+                @Html.DisplayFor(model => model.ClientName)
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Сними измени</button>
+    </form>
+    <br />
+    <hr />
+    @if (Model.EmployeeActivities.Count() == 0)
+    {
+        <p><em>Нема ангажирани работници за оваа активност во моментов!</em></p>
+    }
+    else
+
+    {
+        <p>Ангажирани работници во моментов:</p>
+        <ul>
+            @foreach (var employee in Model.EmployeeActivities)
+            {
+
+                <li>@employee.FirstName @employee.LastName <span style="color:green"> -- вклучен во @Model.Description!</span></li>
+            }
+
+        </ul>
+
+    }
+    <hr />
+</div>
+<br/><br/>
+<a asp-action="EmployeesActivities" asp-controller="Employee">Назад кон листа на активности</a>
+

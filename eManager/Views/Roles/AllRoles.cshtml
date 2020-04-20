@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model List<IdentityRole>
+
+@{
+    ViewBag.Title = "All Roles";
+}
+
+<h1>Тикети за авторизација</h1>
+
+@if (Model.Any())
+{
+    <a class="btn btn-primary mb-3" style="width:auto" asp-action="CreateRole" asp-controller="Roles">Внеси нов тикет</a>
+
+    foreach (var role in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                Тикет ID: @role.Id
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@role.Name</h5>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Roles" asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-primary">Промени</a>
+                <a asp-controller="Roles" asp-action="DeleteRole"  asp-route-id="@role.Id" class="btn btn-danger">Избриши</a>
+            </div>
+        </div>
+        }
+    }
+    else
+    {
+    <div class="card">
+        <div class="card-header">
+
+        </div>
+    </div>
+    }
+}

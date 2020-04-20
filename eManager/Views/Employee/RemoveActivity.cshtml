@@ -1,0 +1,41 @@
+﻿
+@using eManager.WebModels;
+@model ActivityViewModel
+
+@{
+    ViewBag.Title = "Избриши активност";
+    Layout = "_Layout";
+
+}
+
+<div class="modal fade" id="removeActivityModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Дали сте сигурни дека сакате да ја избришете активноста @Model.Description?</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Employee" asp-action="RemoveEmployee">
+                    <input type="hidden" name="Id" value="@Model.ActivityId" />
+                    <button type="submit" class="btn btn-danger">Избриши</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("EmployeesActivities", "Employee")'">Врати</button>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#removeActivityModal").modal();
+    });
+</script>
+
+

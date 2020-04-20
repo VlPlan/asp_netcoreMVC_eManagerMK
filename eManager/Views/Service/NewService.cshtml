@@ -1,0 +1,78 @@
+﻿
+@using eManager.WebModels;
+@model ServiceViewModel
+
+@{
+    ViewBag.Title = "Нова услуга";
+    Layout = "_Layout";
+
+}
+
+
+<div class="modal fade" id="addServiceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Детали за услугата</h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" asp-controller="Service" asp-action="NewService">
+
+                    @Html.HiddenFor(model => model.ServiceId)
+                    <label for="Name">Опис:</label>
+                    @Html.TextBox("Name", null, new { @class = "form-control" })<br />
+
+
+                    <label for="Price">Цена:</label>
+                    @Html.TextBox("Price", null, new { @class = "form-control" })<br />
+
+                    <label for="Quantity">Количина:</label>
+                    @Html.TextBox("Quantity", null, new { @class = "form-control" })<br />
+
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <label for="Currency">Валута:</label>
+                            @Html.DropDownListFor(x => x.Currency, Html.GetEnumSelectList(Model.Currency.GetType()))
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <span class="input-group-text">Клиент:</span>
+                            @Html.DropDownListFor(c => c.SelectedClientId, Model.Clients, "--Select client--")
+                        </div>
+                        @ViewBag.Message
+             
+          
+
+                    </div>
+                    <br/>
+                    <button class="btn btn-success" role="button">Внеси</button>
+
+                </form>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("Services", "Service")'">Затвори</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+    $(function () {
+        $("#addServiceModal").modal();
+    });
+
+
+
+
+
+</script>

@@ -1,0 +1,144 @@
+﻿@using eManager.WebModels;
+@model ActivityViewModel
+
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Додади работници";
+
+}
+
+
+
+
+<div class="container">
+
+    @Html.HiddenFor(model => model.ActivityId)
+
+    <label for="Description">Опис</label>
+    @Model.Description
+    <br />
+    <label for="Duration">Вкупно потрошени часови за активноста:</label>
+    @Model.Duration
+    <br />
+
+    <div>
+        <label for="Date">Датум:</label>
+        @Model.Date
+    </div>
+    <br />
+
+    <div>
+        <label for="Client">За клиент:</label>
+        @Model.Client.Name<br />
+    </div>
+
+
+    <br />
+
+    <br />
+    <div class="row pickedCatalog col-md-12" id="employeesCatalog">
+        <p>Работници ангажирани на @Model.Description</p>
+        <div class="pickedForActivity">
+            <ul>
+                @foreach (var a in Model.EmployeeActivities)
+                {
+                    <li>@a.FirstName @a.LastName</li>
+                }
+            </ul>
+            <hr />
+        </div>
+    </div>
+    <br />
+    <div class="container" id="employees">
+
+        <div id="msg" class="alert-success" style="display:none">Вработениот е додаден!</div>
+
+        <h6>Работници на располагање:</h6>
+        <hr />
+
+        <div class="row col-md-12 catalog" id="employeesCatalog">
+
+            @foreach (var i in Model.AllEmployees)
+            {
+                
+       
+                        <div class="w3-card-4 col-md-3">
+
+                            <header class="w3-container w3-light-grey">
+                                <h3>@i.FirstName @i.LastName</h3>
+                            </header>
+
+                            <div class="w3-container">
+                                <p># @i.EmployeeNumber</p>
+                                <hr>
+                                <img src="~/images/worker.png" alt="Avatar" class="w3-left w3-circle" width="50" height="70">
+                                <p>@i.DateOfBirth</p>
+                            </div>
+                            <div>
+                                <input asp-for="@i.Id" hidden />
+                                <input asp-for="@Model.ActivityId" hidden />
+                                <a value="@i.Id" href="../AddEmployeesToActivity/?employeeId=@i.Id&activityId=@Model.ActivityId" class="w3-button w3-block w3-dark-grey employeeCard" role="button">+Додади</a>
+
+                            </div>
+
+                        </div>
+
+
+
+                }
+
+
+
+
+
+            </div>
+    </div>
+</div>
+        <script>
+            $(function () {
+                $("#updateActivityModal").modal();
+            });
+
+
+
+
+            let employees = document.getElementsByClassName("catalog")[0];
+            console.log(employees);
+            employees.addEventListener("click", function (e) {
+                e.stopPropagation();
+                let target = e.target;
+
+
+                let targetId = target.classList.contains("employeeCard") ? target.value : null;
+                console.log(targetId);
+
+
+                if (targetId != null) {
+                    fetch("/Employee/AddEmployeesToActivity?employeeId=" + targetId, {
+                        method: "post",
+
+                    })
+
+
+                }
+
+
+            })
+
+            $('.employeeCard').click(function () {
+                setTimeout(function () {
+
+                    $("#msg").show().fadeOut(3000);
+                }, 400)
+            })
+
+
+            $('.removeEmployee').click(function () {
+                setTimeout(function () {
+
+                    $("#msgRemove").show().fadeOut(3000);
+                }, 400)
+            })
+        </script>
+

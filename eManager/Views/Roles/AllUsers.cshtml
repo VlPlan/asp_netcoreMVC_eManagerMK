@@ -1,0 +1,33 @@
+﻿@using eManager.WebModels;
+@model IEnumerable<UserViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2>База на корисници</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Име и презиме</th>
+            <th>Корисничко име</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserViewModel u in Model)
+        {
+            <tr>
+                <td>@u.Id</td>
+                <td>@u.FullName</td>
+                <td>@u.UserName</td>
+                <td>
+                    <a asp-controller="Roles" asp-action="EditUser" asp-route-id="@u.Id" class="btn btn-primary">Ажурирај информации</a>
+                    <a asp-controller="Roles" asp-action="DeleteUser" asp-route-id="@u.Id" onclick="return confirm('Дали сте сигурни дека сакате да го избришете корисникот: @u.UserName:@u.FullName од база?')" class="btn btn-primary">Избриши корисник</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

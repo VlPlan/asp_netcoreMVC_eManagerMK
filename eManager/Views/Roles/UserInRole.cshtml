@@ -1,0 +1,33 @@
+﻿
+@using eManager.WebModels;
+@model List<UserRoleViewModel>
+
+@{
+    ViewBag.Title = "Users in roles authorization";
+    var roleId = ViewBag.roleId;
+
+}
+
+<form method="post">
+<div class="card">
+    <div class="card-header">
+        <h2>Додади/Одземи авторизација за корисници</h2>
+    </div>
+    <div class="card-body">
+        @for(int i = 0; i < Model.Count; i++)
+        {
+            <div class="form-check m-1">
+                <input asp-for="@Model[i].isSelected" class="form-check-input"/>
+                <label class="form-check-label" asp-for="@Model[i].isSelected">
+                    @Model[i].UserName
+                </label>
+            </div>
+        }
+
+    </div>
+    <div class="card-footer">
+        <input type="submit" value="Ажурирај" class="btn btn-primary" style="width:auto"/>
+        <a asp-action="EditRole" asp-controller="Roles" asp-route-userId="@roleId" style="width:auto" class="btn btn-primary">Откажи</a>
+    </div>
+</div>
+</form>

@@ -1,0 +1,110 @@
+﻿@using eManager.WebModels;
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Регистрација на нов корисник";
+}
+
+<style>
+
+
+    .form-control {
+        color: #0026ff;
+        font-style: oblique;
+    }
+
+    h6 {
+        position: center;
+        color: #0026ff;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Добредојдовте, ве молиме внесете податоци за регистрација на нов корисник!</h4>
+            <br/>
+            <span asp-validation-summary=""></span>
+            <form asp-controller="user" asp-action="register" method="post">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                       
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                            <input asp-for="FirstName" type="text" class="form-control" placeholder="Име" />
+                        </div>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                       
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                            <input asp-for="LastName" type="text" class="form-control" placeholder="Презиме" />
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                       
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></span>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="е-маил" />
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                       
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                            <input asp-for="Username" type="text" class="form-control" placeholder="Корисничко име" />
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Лозинка" />
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Потврдете ја лозинката" />
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" type="submit">Регистрирај го корисникот</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+

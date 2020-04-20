@@ -1,0 +1,90 @@
+﻿@using eManager.WebModels;
+    @model InvoiceViewModel
+
+    @{
+        ViewBag.Title = "Update invoice details";
+        Layout = "_Layout";
+
+    }
+
+    <div class="modal fade" id="editInvoiceModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Ажурирање на податоци за @Model.InvoiceNumber</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" asp-controller="Invoice" asp-action="UpdateInvoice">
+                        @Html.HiddenFor(model => model.Id)
+
+                        <label asp-for="InvoiceNumber">Број на фактура:</label>
+                        @Html.TextBox("InvoiceNumber", null, new { @class = "form-control" })<br />
+
+                        <label asp-for="Description">Опис:</label>
+                        @Html.TextBox("Description", null, new { @class = "form-control" })<br />
+
+
+                        <span class="input-group-text">Клиент:</span>
+                        @Html.TextBox("ClientName", null, new { @class = "form-control" })<br />
+
+
+                        <label asp-for="ClientAddress">Адреса на клиент:</label>
+                        @Html.TextBox("ClientAddress", null, new { @class = "form-control" })<br />
+
+                        <label for="InvoiceDate">Датум на фактура:</label>
+                        @Html.EditorFor(model => model.InvoiceDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.InvoiceDate, "", new { @class = "text-danger" })<br />
+
+                        <label asp-for="PaymentPeriod">Рок на плаќање:</label>
+                        @Html.TextBox("PaymentPeriod", null, new { @class = "form-control" })<br />
+
+                        <label asp-for="InvoiceServices">Опис на услуги:</label>
+
+                        @for (var i = 0; i < Model.InvoiceServices.Count(); i++)
+                        {
+                           
+                            <label asp-for=InvoiceServices[i].Name>Опис на услуга:</label>
+                            @Html.Display(Model.InvoiceServices[i].Name, null, new { @class = "form-control" })<br />
+                            @Html.TextBox(Model.InvoiceServices[i].Name, null, new { @class = "form-control" })<br />
+                            <label asp-for=InvoiceServices[i].Price>Цена:</label>
+                            <input name="@Model.InvoiceServices[i].Price" placeholder="@Model.InvoiceServices[i].Price" />
+                            <label asp-for=InvoiceServices[i].Quantity>Количина:</label>
+                            <input name="@Model.InvoiceServices[i].Quantity" placeholder="@Model.InvoiceServices[i].Quantity" />
+
+                        }
+
+
+
+                        <button type="submit" class="btn btn-success">Сними ги промените</button>
+
+                    </form>
+
+
+            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("Invoices")'">Затвори</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script>
+
+
+        $(function () {
+            $("#editInvoiceModal").modal();
+        });
+
+
+
+
+    </script>
+
+
